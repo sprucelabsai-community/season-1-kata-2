@@ -5,7 +5,7 @@ import {
 } from '@sprucelabs/heartwood-view-controllers'
 import { fake } from '@sprucelabs/spruce-test-fixtures'
 import { AbstractSpruceFixtureTest } from '@sprucelabs/spruce-test-fixtures'
-import { test, assert } from '@sprucelabs/test-utils'
+import { test } from '@sprucelabs/test-utils'
 import MetaSkillViewController from '../../skillViewControllers/Meta.svc'
 
 @fake.login()
