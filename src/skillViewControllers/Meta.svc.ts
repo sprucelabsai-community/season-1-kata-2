@@ -1,36 +1,59 @@
 import {
 	AbstractSkillViewController,
 	CardViewController,
+	FormViewController,
 	Router,
 	SkillView,
 	SkillViewControllerLoadOptions,
 	ViewControllerOptions,
+	buildForm,
 } from '@sprucelabs/heartwood-view-controllers'
+import { buildSchema } from '@sprucelabs/schema'
 
 export default class MetaSkillViewController extends AbstractSkillViewController {
 	public static id = 'meta'
 	protected cardVc: CardViewController
+	protected formVc: FormViewController<MetaSchema>
 	private router!: Router
 
 	public constructor(options: ViewControllerOptions) {
 		super(options)
+
+		this.formVc = this.FormVc()
 		this.cardVc = this.CardVc()
+	}
+
+	private FormVc(): FormViewController<MetaSchema> {
+		return this.Controller(
+			'form',
+			buildForm({
+				schema: metaSchema,
+				onCancel: this.handleClickBack.bind(this),
+				onSubmit: this.handleClickSave.bind(this),
+				sections: [
+					{
+						fields: [
+							'name',
+							{
+								name: 'values',
+								renderAs: 'textarea',
+							},
+						],
+					},
+				],
+			})
+		)
 	}
 
 	private CardVc(): CardViewController {
 		return this.Controller('card', {
-			footer: {
-				buttons: [
+			header: {
+				title: `Your Family`,
+			},
+			body: {
+				sections: [
 					{
-						id: 'back',
-						label: 'Back',
-						onClick: this.handleClickBack.bind(this),
-					},
-					{
-						id: 'save',
-						label: 'Save',
-						type: 'primary',
-						onClick: this.handleClickSave.bind(this),
+						form: this.formVc.render(),
 					},
 				],
 			},
@@ -66,3 +89,21 @@ export default class MetaSkillViewController extends AbstractSkillViewController
 		}
 	}
 }
+
+const metaSchema = buildSchema({
+	id: 'meta',
+	fields: {
+		name: {
+			type: 'text',
+			isRequired: true,
+			label: 'Family Name',
+		},
+		values: {
+			type: 'text',
+			isRequired: true,
+			label: 'Values',
+		},
+	},
+})
+
+export type MetaSchema = typeof metaSchema
